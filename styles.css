@@ -1,13 +1,145 @@
+:root {
+  --ff-a-r: "Aileron Regular", sans-serif;
+  --ff-a-b: "Aileron Bold", sans-serif;
+  --ff-o: "Olympic", serif;
+  --ff-g: "Goudy", serif;
+  --marg-d: 2rem;
+  --marg-m: 1rem;
+}
+
 * {
   margin: 0;
   box-sizing: border-box;
+  font-size: 12px;
 }
 
-body {
+@media all and (min-width: 568px) {
+  body {
+    margin: var(--marg-d);
+  }
 }
+@media all and (max-width: 568px) {
+  body {
+    margin: var(--marg-m);
+  }
+}
+
+@media all and (min-width: 568px) {
+  header {
+    margin-bottom: var(--marg-d);
+  }
+}
+@media all and (max-width: 568px) {
+  header {
+    margin-bottom: var(--marg-m);
+  }
+}
+
+main {
+  display: flex;
+  gap: 3rem;
+}
+@media all and (min-width: 568px) {
+  main {
+    flex-direction: row;
+  }
+}
+@media all and (max-width: 568px) {
+  main {
+    flex-direction: column;
+  }
+}
+
+nav {
+  display: flex;
+}
+@media all and (min-width: 568px) {
+  nav {
+    flex-direction: column;
+  }
+}
+@media all and (max-width: 568px) {
+  nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+  }
+}
+
+/* ---------------------------------- text ---------------------------------- */
 
 h1 {
+  font-family: var(--ff-o);
+  font-size: 3rem;
+  line-height: 2.5rem;
+}
+
+.subtitle {
+  font-family: var(--ff-a-b);
+  font-size: 1.15rem;
+  text-transform: uppercase;
 }
 
 h2 {
+  font-family: var(--ff-g);
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-family: var(--ff-a-b);
+  font-size: 1rem;
+}
+
+nav {
+  font-family: var(--ff-g);
+  font-size: 1.2rem;
+}
+
+header,
+nav {
+  a {
+    font-family: inherit;
+    font-size: inherit;
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+p {
+  font-family: var(--ff-a-r);
+  font-size: 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  white-space: nowrap;
+}
+
+/* ------------------------------- font faces ------------------------------- */
+
+@font-face {
+  font-family: "Olympic";
+  src: url("/assets/Olympic-Light.otf");
+}
+
+@font-face {
+  font-family: "Goudy";
+  src: url("/assets/GoudyBookletter1911-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Aileron Bold";
+  src: url("/assets/Aileron-Bold.otf");
+}
+
+@font-face {
+  font-family: "Aileron Regular";
+  src: url("/assets/Aileron-Regular.otf");
 }

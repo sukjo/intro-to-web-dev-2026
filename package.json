@@ -1,0 +1,11 @@
+{
+  "name": "dhss-ga-1122_class-site",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jo Suk",
+  "license": "ISC",
+  "description": ""
+}
