@@ -1,25 +1,248 @@
+let siteDataPromise;
+
+/* -------------------------------------------------------------------------- */
+/*                             google sheets data                             */
+/* -------------------------------------------------------------------------- */
+const CSVURLs = {
+  schedule:
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJOOLP80A5zIrLE0zfMmtcL8y3-ecBg8ycPxbo8R8gxI_oKteZ0cT_PEwlS6VY1x7uXmvn-q1Fz8w7/pub?gid=0&single=true&output=csv",
+  readings:
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJOOLP80A5zIrLE0zfMmtcL8y3-ecBg8ycPxbo8R8gxI_oKteZ0cT_PEwlS6VY1x7uXmvn-q1Fz8w7/pub?gid=2095943669&single=true&output=csv",
+  assignments:
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJOOLP80A5zIrLE0zfMmtcL8y3-ecBg8ycPxbo8R8gxI_oKteZ0cT_PEwlS6VY1x7uXmvn-q1Fz8w7/pub?gid=509634392&single=true&output=csv",
+  projects:
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJOOLP80A5zIrLE0zfMmtcL8y3-ecBg8ycPxbo8R8gxI_oKteZ0cT_PEwlS6VY1x7uXmvn-q1Fz8w7/pub?gid=405980673&single=true&output=csv",
+};
+
+function fetchCSVasJSON(url) {
+  return new Promise((resolve, reject) => {
+    Papa.parse(url, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => resolve(results.data),
+      error: (err) => reject(err),
+    });
+  });
+}
+
+async function loadAllCSVs() {
+  try {
+    const entries = Object.entries(CSVURLs);
+    const promises = entries.map(([key, url]) => {
+      return fetchCSVasJSON(url).then((data) => [key, data]);
+    });
+
+    return Promise.all(promises).then((res) => {
+      return Object.fromEntries(res);
+    });
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+siteDataPromise = loadAllCSVs();
+
+function createPageSection(parent, id, title) {
+  const container = document.createElement("div");
+  container.id = id;
+
+  const header = document.createElement("h3");
+  header.textContent = title;
+
+  container.appendChild(header);
+  parent.appendChild(container);
+
+  return container;
+}
+
+function createAssignmentsSection(row) {
+  const dueDate =
+    row["Due Date"] && row["Due Date"] !== "N/A"
+      ? `<p>Due ${row["Due Date"]}</p>`
+      : "";
+
+  return `
+    <h4>${row["Title"]}</h4>
+    <p>${row["Description"]}</p>
+    ${dueDate}
+  `;
+}
+
+function initSchedule(data) {
+  const weeks = {};
+  const sDiv = document.getElementById("schedule");
+
+  data.schedule.forEach((row) => {
+    // const week = Number(row["Week"]);
+    // if (!Number.isInteger(week)) return;
+
+    const week = row["Week"];
+    if (week.length < 1) return;
+
+    weeks[week] = {
+      schedule: row,
+      readings: [],
+      assignments: [],
+      container: null,
+    };
+  });
+
+  data.readings.forEach((row) => {
+    const week = Number(row["Week"]);
+    if (!weeks[week]) return;
+
+    weeks[week].readings.push(row);
+  });
+
+  data.assignments.forEach((row) => {
+    const week = Number(row["Week"]);
+    if (!weeks[week]) return;
+
+    weeks[week].assignments.push(row);
+  });
+
+  console.log(weeks);
+
+  Object.keys(weeks)
+    .sort((a, b) => a - b)
+    .forEach((week) => {
+      // const section = createPageSection(sDiv, "eachWeek", `Week ${week}`)
+      const weekContainer = document.createElement("div");
+      weekContainer.id = "eachWeek";
+
+      sDiv.appendChild(weekContainer);
+
+      weeks[week].container = weekContainer;
+    });
+
+  Object.values(weeks).forEach(({ container, schedule }) => {
+    const sww1 = schedule["Scholarly Website of the Week (1)"];
+    const sww2 = schedule["Scholarly Website of the Week (2)"];
+    let swwHTML = "";
+
+    if (sww1.length > 0 && sww2.length > 0) {
+      swwHTML = `<p class="sww">Scholarly website presentations: ${sww1} and ${sww2}</p>`;
+    } else if (sww1.length > 0 || sww2.length > 0) {
+      swwHTML = `<p class="sww">Scholarly website presentation: ${
+        sww1 || sww2
+      }</p>`;
+    } else {
+      swwHTML = "";
+    }
+
+    let rowHTML = `
+          <h3>Week ${schedule["Week"]} • ${schedule["Date"]}</h3>
+          <p>Topics: ${schedule["Topics"]}</p>
+          ${
+            schedule["Technical Tutorial"]
+              ? `<p>Technical tutorial: ${schedule["Technical Tutorial"]}</p>`
+              : ""
+          }
+          ${swwHTML}
+          ${
+            schedule["Guest Lecture"]
+              ? `<p>Guest lecture: ${schedule["Guest Lecture"]}</p>`
+              : ""
+          }
+      `;
+
+    container.insertAdjacentHTML("beforeend", rowHTML);
+  });
+
+  Object.values(weeks).forEach(({ container, readings }) => {
+    if (readings.length === 0) return;
+
+    const ul = document.createElement("ul");
+
+    readings.forEach((row) => {
+      const li = `<li>${row["Author"] ? row["Author"] : ""} ${
+        row["URL"]
+          ? `<a
+          href="${row["URL"]}"
+          target="_blank"
+          class="ext"
+          >${row["Title"]}</a
+        >`
+          : `<p>${row["Title"]}</p>`
+      } ${row["Section"] ? row["Section"] : ""}</li>`;
+      ul.insertAdjacentHTML("beforeend", li);
+    });
+
+    container.appendChild(ul);
+  });
+
+  Object.values(weeks).forEach(({ container, assignments }) => {
+    if (assignments.length === 0) return;
+
+    const ul = document.createElement("ul");
+
+    assignments.forEach((row) => {
+      const li = document.createElement("li");
+      li.innerHTML = row["Assignment"];
+      ul.appendChild(li);
+    });
+
+    container.appendChild(ul);
+  });
+}
+
+function initAssignments(data) {
+  const aDiv = document.getElementById("assignments");
+
+  const projectsCont = createPageSection(aDiv, "projectsCont", "Projects");
+  const assignmentsCont = createPageSection(
+    aDiv,
+    "assignmentsCont",
+    "Assignments"
+  );
+
+  const projectsHTML = data
+    .filter((row) => row["Type"] === "project")
+    .map((row) => createAssignmentsSection(row))
+    .join("");
+
+  const assignmentsHTML = data
+    .filter((row) => row["Type"] === "assignment")
+    .map((row) => createAssignmentsSection(row))
+    .join("");
+
+  projectsCont.insertAdjacentHTML("beforeend", projectsHTML);
+  assignmentsCont.insertAdjacentHTML("beforeend", assignmentsHTML);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   routing                                  */
+/* -------------------------------------------------------------------------- */
+
 const section = document.querySelector("section");
 
 const routes = {
   404: {
     template: "/pages/404.html",
     title: "404",
-    // description: "Page not found",
+    description: "Page not found",
   },
   "/": {
     template: "/pages/home.html",
     title: "Intro to Web Development",
-    // description: "Home page",
+    description: "Home page",
   },
   "/assignments": {
     template: "/pages/assignments.html",
     title: "Assignments",
-    description: "Assignments page",
+    description: "Assignments and projects page",
   },
   "/schedule": {
     template: "/pages/schedule.html",
     title: "Schedule",
-    // description: "Schedule page",
+    description: "Schedule page",
+  },
+  "/students": {
+    template: "/pages/students.html",
+    title: "Students",
+    description: "Students page",
   },
 };
 
@@ -32,21 +255,23 @@ const locationHandler = async () => {
 
   let location = window.location.hash.slice(1) || "/"; // hash routing
 
-  // get the route object from the urlRoutes object
+  // get the route object from the routes object
   const route = routes[location] || routes["404"];
   // get the html from the template
   const html = await fetch(route.template).then((response) => response.text());
-  // set the content of the content div to the html
   section.innerHTML = html;
-  // set the title of the document to the title of the route
   document.title = route.title;
-  //   set the description of the document to the description of the route
-  //   document
-  //     .querySelector('meta[name="description"]')
-  //     .setAttribute("content", route.description);
+  // document
+  //   .querySelector('meta[name="description"]')
+  //   .setAttribute("content", route.description);
 
   if (location === "/schedule") {
-    loadScheduleData();
+    // loadScheduleData();
+    const data = await siteDataPromise;
+    initSchedule(data);
+  } else if (location === "/assignments") {
+    const data = await siteDataPromise;
+    initAssignments(data.projects);
   }
 };
 
@@ -65,97 +290,38 @@ document.addEventListener("click", (e) => {
     return;
   }
   e.preventDefault();
-  route(); // URL routing
+  // route(); // URL routing
   route(e); // hash routing
 });
 
-// add an event listener to the window that watches for url changes
 // window.onpopstate = locationHandler; // URL routing
 window.addEventListener("hashchange", locationHandler); // hash routing
 
-// call the urlLocationHandler function to handle the initial url
 window.route = route;
-// call the urlLocationHandler function to handle the initial url
+
 locationHandler();
 
-function loadScheduleData() {
-  const sDiv = document.getElementById("schedule");
+/* -------------------------------------------------------------------------- */
+/*                                DOM inspector                               */
+/* -------------------------------------------------------------------------- */
 
-  console.log("loadScheduleData running...");
+const inspector = new DomInspector({
+  root: "body",
+  exclude: [],
+  maxZIndex: "100",
+  theme: "DI",
+});
 
-  fetch(
-    "https://script.google.com/macros/s/AKfycbxambbhgGeru8BaH9LNidUBCmhvayXDje8Pd0fxvgV5eBJ4aPPmXiZh1M6NCutp6H25Aw/exec"
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      data.forEach((row) => {
-        if (!isNaN(row["week"])) {
-          const oneWeek = document.createElement("div");
-          oneWeek.class = "oneWeek";
-          sDiv.appendChild(oneWeek);
+// inspector.enable();
 
-          const week = document.createElement("h3");
-          week.class = "week";
-          week.innerHTML = `Week ${row["week"]}`;
-          oneWeek.appendChild(week);
+const DI_toggle = document.getElementById("DI-toggle-box");
 
-          const topics = document.createElement("h4");
-          topics.class = "topics";
-          topics.innerHTML = row["topics"];
-          oneWeek.appendChild(topics);
+DI_toggle.addEventListener("change", (e) => {
+  if (e.currentTarget.checked) {
+    inspector.enable();
+  } else {
+    inspector.disable();
+  }
+});
 
-          if (row["sww_1"].length == 0 && row["sww_2"].length == 0) {
-            return;
-          } else if (row["sww_1"].length == 0 || row["sww_2"].length == 0) {
-            const sww = document.createElement("p");
-            sww.class = "sww";
-
-            if (row["sww_1"].length > row["sww_2"].length) {
-              sww.innerHTML = `Scholarly website of the week: ${row["sww_1"]}`;
-              oneWeek.appendChild(sww);
-            } else {
-              sww.innerHTML = `Scholarly website of the week: ${row["sww_2"]}`;
-              oneWeek.appendChild(sww);
-            }
-          } else {
-            const sww = document.createElement("p");
-            sww.class = "sww";
-            sww.innerHTML = `Scholarly website of the week: ${row["sww_1"]} and ${row["sww_2"]}`;
-            oneWeek.appendChild(sww);
-          }
-
-          if (row["guest"].length > 0) {
-            const guest = document.createElement("p");
-            guest.class = "guest";
-            guest.innerHTML = `Guest lecturer: ${row["guest"]}`;
-            oneWeek.appendChild(guest);
-          }
-
-          if (row["tutorial"].length > 0) {
-            const tutorial = document.createElement("p");
-            tutorial.class = "tutorial";
-            tutorial.innerHTML = `Technical tutorial: ${row["tutorial"]}`;
-            oneWeek.appendChild(tutorial);
-          }
-
-          if (row["readings"].length > 0) {
-            const readings = document.createElement("p");
-            readings.class = "readings";
-            readings.innerHTML = `Readings for the following week: ${row["readings"]}`;
-            oneWeek.appendChild(readings);
-          }
-
-          if (row["assignments"].length > 0) {
-            const assignments = document.createElement("p");
-            assignments.class = "assignments";
-            assignments.innerHTML = `Assignments: ${row["assignments"]}`;
-            oneWeek.appendChild(assignments);
-          }
-        }
-      });
-    })
-
-    // console.log(data);
-
-    .catch((err) => console.error(err));
-}
+// inspector.overlay.parent.style.transition = "display ease-in 1s";

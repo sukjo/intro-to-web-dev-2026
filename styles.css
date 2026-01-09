@@ -5,6 +5,11 @@
   --ff-g: "Goudy", serif;
   --marg-d: 2rem;
   --marg-m: 1rem;
+  --c-dark: #253031;
+  --c-light: #f4eeed;
+  --c-acc-1: #699fe6;
+  --c-acc-2: #cee397;
+  --c-acc-3: #fb4d3d;
 }
 
 * {
@@ -110,6 +115,15 @@ p {
   font-size: 1rem;
 }
 
+h3:not(:first-of-type) {
+  padding-top: 0.75rem;
+}
+
+h4,
+p {
+  padding-top: 0.75rem;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -120,6 +134,71 @@ p {
   clip: rect(0, 0, 0, 0);
   border: 0;
   white-space: nowrap;
+}
+
+/* ------------------------------ DOM inspector ----------------------------- */
+
+#DI-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 2rem;
+  z-index: 200;
+}
+
+.DI > * {
+  transition: z-index ease-in 1s;
+}
+
+.DI .margin {
+  background-color: rgba(72, 66, 45, 0.258);
+}
+
+.DI .border {
+  /* background-color: rgba(0, 255, 98, 0.7); */
+}
+
+.DI .padding {
+  /* background-color: rgba(72, 66, 45, 0.526); */
+  /* background-color: rgba(72, 66, 45, 0.258); */
+}
+
+.DI .content {
+  border: 1px dotted black;
+}
+
+.DI .tips {
+  background-color: rgba(72, 66, 45, 0.787);
+  /* background-color: var(--c-dark); */
+}
+
+.DI .tips .tag {
+  color: var(--c-acc-1);
+}
+
+.DI .tips .id {
+  color: var(--c-acc-2);
+}
+
+.DI .tips .class {
+  color: var(--c-acc-3);
+}
+
+.DI .tips .size {
+  color: var(--c-acc-3);
+  margin-left: 1rem;
+}
+
+.DI .tips .line {
+  display: none;
+}
+
+.DI .tips > div {
+  font-family: var(--ff-a-b);
+  color: var(--c-light);
+}
+
+.DI .tips .triangle {
+  display: none;
 }
 
 /* ------------------------------- font faces ------------------------------- */
