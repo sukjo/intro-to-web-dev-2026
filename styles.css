@@ -77,6 +77,8 @@ h1 {
   font-family: var(--ff-o);
   font-size: 3rem;
   line-height: 2.5rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osxfont-smoothing: grayscale;
 }
 
 .subtitle {
@@ -98,6 +100,8 @@ h3 {
 nav {
   font-family: var(--ff-g);
   font-size: 1.2rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osxfont-smoothing: grayscale;
 }
 
 header,
@@ -163,7 +167,7 @@ p {
 }
 
 .DI .content {
-  border: 1px dotted black;
+  /* border: 1px dotted black; */
 }
 
 .DI .tips {

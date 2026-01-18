@@ -12,6 +12,8 @@ const CSVURLs = {
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJOOLP80A5zIrLE0zfMmtcL8y3-ecBg8ycPxbo8R8gxI_oKteZ0cT_PEwlS6VY1x7uXmvn-q1Fz8w7/pub?gid=509634392&single=true&output=csv",
   projects:
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJOOLP80A5zIrLE0zfMmtcL8y3-ecBg8ycPxbo8R8gxI_oKteZ0cT_PEwlS6VY1x7uXmvn-q1Fz8w7/pub?gid=405980673&single=true&output=csv",
+  resources:
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJOOLP80A5zIrLE0zfMmtcL8y3-ecBg8ycPxbo8R8gxI_oKteZ0cT_PEwlS6VY1x7uXmvn-q1Fz8w7/pub?gid=779378196&single=true&output=csv",
 };
 
 function fetchCSVasJSON(url) {
@@ -70,6 +72,13 @@ function createAssignmentsSection(row) {
   `;
 }
 
+function createResourcesSection(res) {
+  const li = `<li><a href="${res["URL"]}" target="_blank"
+          class="ext">${res["Title"]}</a></li>`;
+
+  return li;
+}
+
 function initSchedule(data) {
   const weeks = {};
   const sDiv = document.getElementById("schedule");
@@ -103,12 +112,9 @@ function initSchedule(data) {
     weeks[week].assignments.push(row);
   });
 
-  console.log(weeks);
-
   Object.keys(weeks)
     .sort((a, b) => a - b)
     .forEach((week) => {
-      // const section = createPageSection(sDiv, "eachWeek", `Week ${week}`)
       const weekContainer = document.createElement("div");
       weekContainer.id = "eachWeek";
 
@@ -154,7 +160,11 @@ function initSchedule(data) {
   Object.values(weeks).forEach(({ container, readings }) => {
     if (readings.length === 0) return;
 
+    const h4 = document.createElement("h4");
+    h4.innerHTML = "Readings:";
+    container.appendChild(h4);
     const ul = document.createElement("ul");
+    ul.classList.add("readings");
 
     readings.forEach((row) => {
       const li = `<li>${row["Author"] ? row["Author"] : ""} ${
@@ -176,7 +186,11 @@ function initSchedule(data) {
   Object.values(weeks).forEach(({ container, assignments }) => {
     if (assignments.length === 0) return;
 
+    const h4 = document.createElement("h4");
+    h4.innerHTML = "Assignments:";
+    container.appendChild(h4);
     const ul = document.createElement("ul");
+    ul.classList.add("assignments");
 
     assignments.forEach((row) => {
       const li = document.createElement("li");
@@ -212,6 +226,43 @@ function initAssignments(data) {
   assignmentsCont.insertAdjacentHTML("beforeend", assignmentsHTML);
 }
 
+function initResources(data) {
+  const rDiv = document.getElementById("resources");
+  let uniqueTypes = [];
+  let sortedResources = [];
+
+  data.forEach((row) => {
+    if (!uniqueTypes.includes(row["Type"])) uniqueTypes.push(row["Type"]);
+  });
+
+  uniqueTypes.forEach((type) => {
+    sortedResources[type] = [];
+  });
+
+  data.forEach((row) => {
+    const type = row["Type"];
+    sortedResources[type].push(row);
+  });
+
+  uniqueTypes.forEach((type) => {
+    const typeCont = createPageSection(rDiv, `${type}`, `${type}`);
+    const htmlContent = `
+      <ul>
+      ${sortedResources[type]
+        .map((resource) => {
+          return createResourcesSection(resource);
+        })
+        .join("")}
+      </ul>
+    `;
+    // console.log(htmlContent);
+    typeCont.insertAdjacentHTML("beforeend", htmlContent);
+  });
+
+  console.log(sortedResources);
+  console.log(uniqueTypes);
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                   routing                                  */
 /* -------------------------------------------------------------------------- */
@@ -244,6 +295,11 @@ const routes = {
     title: "Students",
     description: "Students page",
   },
+  "/resources": {
+    template: "/pages/resources.html",
+    title: "Resources",
+    description: "Resources page",
+  },
 };
 
 const locationHandler = async () => {
@@ -272,6 +328,9 @@ const locationHandler = async () => {
   } else if (location === "/assignments") {
     const data = await siteDataPromise;
     initAssignments(data.projects);
+  } else if (location === "/resources") {
+    const data = await siteDataPromise;
+    initResources(data.resources);
   }
 };
 
