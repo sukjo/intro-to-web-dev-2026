@@ -209,7 +209,7 @@ function initAssignments(data) {
   const assignmentsCont = createPageSection(
     aDiv,
     "assignmentsCont",
-    "Assignments"
+    "Assignments",
   );
 
   const projectsHTML = data
@@ -271,32 +271,32 @@ const section = document.querySelector("section");
 
 const routes = {
   404: {
-    template: "/pages/404.html",
+    template: "./pages/404.html",
     title: "404",
     description: "Page not found",
   },
   "/": {
-    template: "/pages/home.html",
+    template: "./pages/home.html",
     title: "Intro to Web Development",
     description: "Home page",
   },
   "/assignments": {
-    template: "/pages/assignments.html",
+    template: "./pages/assignments.html",
     title: "Assignments",
     description: "Assignments and projects page",
   },
   "/schedule": {
-    template: "/pages/schedule.html",
+    template: "./pages/schedule.html",
     title: "Schedule",
     description: "Schedule page",
   },
   "/students": {
-    template: "/pages/students.html",
+    template: "./pages/students.html",
     title: "Students",
     description: "Students page",
   },
   "/resources": {
-    template: "/pages/resources.html",
+    template: "./pages/resources.html",
     title: "Resources",
     description: "Resources page",
   },
