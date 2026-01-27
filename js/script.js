@@ -301,19 +301,10 @@ const routes = {
 };
 
 const locationHandler = async () => {
-  let location = window.location.pathname.replace(base_path, "") || "/";
+  let location = window.location.hash.slice(1) || "/"; // hash routing
+
   location = location.startsWith("/") ? location : `/${location}`;
 
-  // let location = window.location.pathname; // get the url path
-  // // if the path length is 0, set it to primary page route
-  // if (location.length == 0) {
-  //   location = "/";
-  // } // all the above for URL routing
-
-  // let location = window.location.hash.slice(1) || "/"; // hash routing
-
-  // get the route object from the routes object
-  // const route = routes[location] || routes["404"];
   const route = routes[location] || routes["404"];
 
   // get the html from the template
@@ -325,7 +316,6 @@ const locationHandler = async () => {
   //   .setAttribute("content", route.description);
 
   if (location === "/schedule") {
-    // loadScheduleData();
     const data = await siteDataPromise;
     initSchedule(data);
   } else if (location === "/assignments") {
@@ -338,25 +328,18 @@ const locationHandler = async () => {
 };
 
 const route = (event) => {
-  event = event || window.event;
   event.preventDefault();
-  window.history.pushState({}, "", event.target.href); // URL routing
-  // window.location.hash = event.target.getAttribute("href"); // hash routing
-  locationHandler(); // URL routing
+  window.location.hash = event.target.getAttribute("href"); // hash routing
 };
 
 document.addEventListener("click", (e) => {
   const { target } = e;
-  if (!target.matches("nav a:not(.ext)")) {
-    return;
-  }
+  if (!target.matches("nav a:not(.ext)")) return;
   e.preventDefault();
-  // route(); // URL routing
   route(e); // hash routing
 });
 
-window.onpopstate = locationHandler; // URL routing
-// window.addEventListener("hashchange", locationHandler); // hash routing
+window.addEventListener("hashchange", locationHandler); // hash routing
 
 window.route = route;
 
