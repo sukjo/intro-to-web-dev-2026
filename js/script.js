@@ -314,7 +314,7 @@ const locationHandler = async () => {
 
   // get the route object from the routes object
   // const route = routes[location] || routes["404"];
-  const route = routes[`${base_path}${location}`] || routes["404"];
+  const route = routes[location] || routes["404"];
 
   // get the html from the template
   const html = await fetch(route.template).then((response) => response.text());
@@ -351,8 +351,8 @@ document.addEventListener("click", (e) => {
     return;
   }
   e.preventDefault();
-  route(); // URL routing
-  // route(e); // hash routing
+  // route(); // URL routing
+  route(e); // hash routing
 });
 
 window.onpopstate = locationHandler; // URL routing
