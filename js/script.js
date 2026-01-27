@@ -62,7 +62,7 @@ function createPageSection(parent, id, title) {
 function createAssignmentsSection(row) {
   const dueDate =
     row["Due Date"] && row["Due Date"] !== "N/A"
-      ? `<p>Due ${row["Due Date"]}</p>`
+      ? `<p class="dueDate">Due ${row["Due Date"]}</p>`
       : "";
 
   return `
@@ -116,7 +116,7 @@ function initSchedule(data) {
     .sort((a, b) => a - b)
     .forEach((week) => {
       const weekContainer = document.createElement("div");
-      weekContainer.id = "eachWeek";
+      weekContainer.classList.add("eachWeek");
 
       sDiv.appendChild(weekContainer);
 
@@ -139,13 +139,8 @@ function initSchedule(data) {
     }
 
     let rowHTML = `
-          <h3>Week ${schedule["Week"]} • ${schedule["Date"]}</h3>
-          <p>Topics: ${schedule["Topics"]}</p>
-          ${
-            schedule["Technical Tutorial"]
-              ? `<p>Technical tutorial: ${schedule["Technical Tutorial"]}</p>`
-              : ""
-          }
+          <h3>Week ${schedule["Week"]}: ${schedule["Date"]}</h3>
+          <p>${schedule["Topics"]}</p>
           ${swwHTML}
           ${
             schedule["Guest Lecture"]
@@ -161,10 +156,11 @@ function initSchedule(data) {
     if (readings.length === 0) return;
 
     const h4 = document.createElement("h4");
-    h4.innerHTML = "Readings:";
+    h4.innerHTML = "Readings";
+    h4.classList.add("readings-h4");
     container.appendChild(h4);
     const ul = document.createElement("ul");
-    ul.classList.add("readings");
+    ul.classList.add("readings-list");
 
     readings.forEach((row) => {
       const li = `<li>${row["Author"] ? row["Author"] : ""} ${
@@ -187,10 +183,11 @@ function initSchedule(data) {
     if (assignments.length === 0) return;
 
     const h4 = document.createElement("h4");
-    h4.innerHTML = "Assignments:";
+    h4.innerHTML = "Assignments";
+    h4.classList.add("assignments-h4");
     container.appendChild(h4);
     const ul = document.createElement("ul");
-    ul.classList.add("assignments");
+    ul.classList.add("assignments-list");
 
     assignments.forEach((row) => {
       const li = document.createElement("li");
@@ -303,13 +300,13 @@ const routes = {
 };
 
 const locationHandler = async () => {
-  //   let location = window.location.pathname; // get the url path
-  //   // if the path length is 0, set it to primary page route
-  //   if (location.length == 0) {
-  //     location = "/";
-  //   } // all the above for URL routing
+  let location = window.location.pathname; // get the url path
+  // if the path length is 0, set it to primary page route
+  if (location.length == 0) {
+    location = "/";
+  } // all the above for URL routing
 
-  let location = window.location.hash.slice(1) || "/"; // hash routing
+  // let location = window.location.hash.slice(1) || "/"; // hash routing
 
   // get the route object from the routes object
   const route = routes[location] || routes["404"];
@@ -337,24 +334,23 @@ const locationHandler = async () => {
 const route = (event) => {
   event = event || window.event;
   event.preventDefault();
-  //   window.history.pushState({}, "", event.target.href); // URL routing
-  window.location.hash = event.target.getAttribute("href"); // hash routing
-  //   locationHandler(); // URL routing
+  window.history.pushState({}, "", event.target.href); // URL routing
+  // window.location.hash = event.target.getAttribute("href"); // hash routing
+  locationHandler(); // URL routing
 };
 
 document.addEventListener("click", (e) => {
   const { target } = e;
-  if (!target.matches("nav a")) {
-    // may have to update this if you want any other links outside of nav to be responsive on the page
+  if (!target.matches("nav a:not(.ext)")) {
     return;
   }
   e.preventDefault();
-  // route(); // URL routing
-  route(e); // hash routing
+  route(); // URL routing
+  // route(e); // hash routing
 });
 
-// window.onpopstate = locationHandler; // URL routing
-window.addEventListener("hashchange", locationHandler); // hash routing
+window.onpopstate = locationHandler; // URL routing
+// window.addEventListener("hashchange", locationHandler); // hash routing
 
 window.route = route;
 
@@ -364,23 +360,23 @@ locationHandler();
 /*                                DOM inspector                               */
 /* -------------------------------------------------------------------------- */
 
-const inspector = new DomInspector({
-  root: "body",
-  exclude: [],
-  maxZIndex: "100",
-  theme: "DI",
-});
+// const inspector = new DomInspector({
+//   root: "body",
+//   exclude: [],
+//   maxZIndex: "100",
+//   theme: "DI",
+// });
 
-// inspector.enable();
+// // inspector.enable();
 
-const DI_toggle = document.getElementById("DI-toggle-box");
+// const DI_toggle = document.getElementById("DI-toggle-box");
 
-DI_toggle.addEventListener("change", (e) => {
-  if (e.currentTarget.checked) {
-    inspector.enable();
-  } else {
-    inspector.disable();
-  }
-});
+// DI_toggle.addEventListener("change", (e) => {
+//   if (e.currentTarget.checked) {
+//     inspector.enable();
+//   } else {
+//     inspector.disable();
+//   }
+// });
 
-// inspector.overlay.parent.style.transition = "display ease-in 1s";
+// // inspector.overlay.parent.style.transition = "display ease-in 1s";
