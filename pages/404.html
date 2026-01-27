@@ -1,1 +1,17 @@
-<p>Page not found</p>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting…</title>
+    <script>
+      const path = window.location.pathname;
+      const query = window.location.search;
+      const hash = window.location.hash;
+
+      window.location.replace(
+        "/index.html?redirect=" + encodeURIComponent(path + query + hash),
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

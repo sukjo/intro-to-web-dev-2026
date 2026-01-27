@@ -264,6 +264,13 @@ function initResources(data) {
 /*                                   routing                                  */
 /* -------------------------------------------------------------------------- */
 
+const params = new URLSearchParams(window.location.search);
+const redirect = params.get("redirect");
+
+if (redirect) {
+  window.history.replaceState({}, "", redirect);
+}
+
 const section = document.querySelector("section");
 
 const routes = {
