@@ -256,8 +256,8 @@ function initResources(data) {
     typeCont.insertAdjacentHTML("beforeend", htmlContent);
   });
 
-  console.log(sortedResources);
-  console.log(uniqueTypes);
+  // console.log(sortedResources);
+  // console.log(uniqueTypes);
 }
 
 /* -------------------------------------------------------------------------- */
