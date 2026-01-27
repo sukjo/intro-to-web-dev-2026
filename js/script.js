@@ -264,59 +264,58 @@ function initResources(data) {
 /*                                   routing                                  */
 /* -------------------------------------------------------------------------- */
 
-const params = new URLSearchParams(window.location.search);
-const redirect = params.get("redirect");
-
-if (redirect) {
-  window.history.replaceState({}, "", redirect);
-}
-
+const base_path = "/intro-to-web-dev-2026";
 const section = document.querySelector("section");
 
 const routes = {
   404: {
-    template: "./pages/404.html",
+    template: `${base_path}/pages/404.html`,
     title: "404",
     description: "Page not found",
   },
   "/": {
-    template: "./pages/home.html",
+    template: `${base_path}/pages/home.html`,
     title: "Intro to Web Development",
     description: "Home page",
   },
   "/assignments": {
-    template: "./pages/assignments.html",
+    template: `${base_path}/pages/assignments.html`,
     title: "Assignments",
     description: "Assignments and projects page",
   },
   "/schedule": {
-    template: "./pages/schedule.html",
+    template: `${base_path}/pages/schedule.html`,
     title: "Schedule",
     description: "Schedule page",
   },
   "/students": {
-    template: "./pages/students.html",
+    template: `${base_path}/pages/students.html`,
     title: "Students",
     description: "Students page",
   },
   "/resources": {
-    template: "./pages/resources.html",
+    template: `${base_path}/pages/resources.html`,
     title: "Resources",
     description: "Resources page",
   },
 };
 
 const locationHandler = async () => {
-  let location = window.location.pathname; // get the url path
-  // if the path length is 0, set it to primary page route
-  if (location.length == 0) {
-    location = "/";
-  } // all the above for URL routing
+  let location = window.location.pathname.replace(base_path, "") || "/";
+  location = location.startsWith("/") ? location : `/${location}`;
+
+  // let location = window.location.pathname; // get the url path
+  // // if the path length is 0, set it to primary page route
+  // if (location.length == 0) {
+  //   location = "/";
+  // } // all the above for URL routing
 
   // let location = window.location.hash.slice(1) || "/"; // hash routing
 
   // get the route object from the routes object
-  const route = routes[location] || routes["404"];
+  // const route = routes[location] || routes["404"];
+  const route = routes[`${base_path}${location}`] || routes["404"];
+
   // get the html from the template
   const html = await fetch(route.template).then((response) => response.text());
   section.innerHTML = html;

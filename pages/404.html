@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <title>Redirecting…</title>
     <script>
-      const path = window.location.pathname;
+      const base = "/my-website";
+      const path = window.location.pathname.replace(base, "");
       const query = window.location.search;
       const hash = window.location.hash;
 
       window.location.replace(
-        "/index.html?redirect=" + encodeURIComponent(path + query + hash),
+        base +
+          "/index.html?redirect=" +
+          encodeURIComponent(path + query + hash),
       );
     </script>
   </head>
