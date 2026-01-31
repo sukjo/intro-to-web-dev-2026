@@ -264,7 +264,11 @@ function initResources(data) {
 /*                                   routing                                  */
 /* -------------------------------------------------------------------------- */
 
-const base_path = "/intro-to-web-dev-2026";
+const base_path =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? ""
+    : "/intro-to-web-dev-2026";
 const section = document.querySelector("section");
 
 const routes = {
@@ -301,19 +305,18 @@ const routes = {
 };
 
 const locationHandler = async () => {
-  let location = window.location.hash.slice(1) || "/"; // hash routing
+  let location = window.location.hash.slice(1) || "/"; // rm hash
 
   location = location.startsWith("/") ? location : `/${location}`;
 
   const route = routes[location] || routes["404"];
 
-  // get the html from the template
   const html = await fetch(route.template).then((response) => response.text());
   section.innerHTML = html;
   document.title = route.title;
-  // document
-  //   .querySelector('meta[name="description"]')
-  //   .setAttribute("content", route.description);
+  document
+    .querySelector('meta[name="description"]')
+    .setAttribute("content", route.description);
 
   if (location === "/schedule") {
     const data = await siteDataPromise;
@@ -329,7 +332,7 @@ const locationHandler = async () => {
 
 const route = (event) => {
   event.preventDefault();
-  window.location.hash = event.target.getAttribute("href"); // hash routing
+  window.location.hash = event.target.getAttribute("href");
 };
 
 document.addEventListener("click", (e) => {
@@ -339,7 +342,7 @@ document.addEventListener("click", (e) => {
   route(e); // hash routing
 });
 
-window.addEventListener("hashchange", locationHandler); // hash routing
+window.addEventListener("hashchange", locationHandler);
 
 window.route = route;
 

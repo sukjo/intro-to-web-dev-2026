@@ -113,7 +113,8 @@ h1 {
   -moz-osxfont-smoothing: grayscale;
 }
 
-h1 a:hover {
+h1 a:hover,
+h1 a:focus {
   box-shadow: none;
   background-color: transparent;
 }
@@ -188,11 +189,21 @@ nav a:focus {
 }
 
 nav a.ext::after {
-  font-size: 1rem;
-  /* content: "┓";
-  padding-left: 1ch;
+  content: "";
+  background-image: url("assets/NE-arrow.png");
+  background-repeat: no-repeat;
+  background-size: 0.8ch 0.8ch;
+  width: 1ch;
+  height: 1ch;
+  transform: rotate(0deg);
+  margin-left: 0.5ch;
   display: inline-block;
-  transform: rotate(0deg); */
+  transition: filter ease-in-out 0.5s;
+}
+
+nav a.ext:hover::after,
+nav a.ext:focus::after {
+  filter: invert(100%);
 }
 
 a.ext::after {
