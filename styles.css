@@ -102,6 +102,15 @@ nav {
   }
 }
 
+#assignments {
+  margin-bottom: 2rem;
+}
+
+#assignments > *,
+#projects > * {
+  padding-bottom: 0.5rem;
+}
+
 /* ---------------------------------- text ---------------------------------- */
 
 h1 {
@@ -245,6 +254,7 @@ a:visited {
 
 .dueDate {
   font-family: var(--ff-ssp-b);
+  margin-bottom: 1rem;
 }
 
 .eachWeek:not(:first-of-type) > h3,

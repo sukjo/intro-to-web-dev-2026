@@ -199,29 +199,30 @@ function initSchedule(data) {
   });
 }
 
-function initAssignments(data) {
-  const aDiv = document.getElementById("assignments");
+// function initAssignments(data) {
+//   const aDiv = document.getElementById("assignments");
 
-  const projectsCont = createPageSection(aDiv, "projectsCont", "Projects");
-  const assignmentsCont = createPageSection(
-    aDiv,
-    "assignmentsCont",
-    "Assignments",
-  );
+//   const projectsCont = createPageSection(aDiv, "projectsCont", "Projects");
+//   const assignmentsCont = createPageSection(
+//     aDiv,
+//     "assignmentsCont",
+//     "Assignments",
+//   );
 
-  const projectsHTML = data
-    .filter((row) => row["Type"] === "project")
-    .map((row) => createAssignmentsSection(row))
-    .join("");
+//   const projectsHTML = data
+//     .filter((row) => row["Type"] === "project")
+//     .map((row) => createAssignmentsSection(row))
+//     .join("");
 
-  const assignmentsHTML = data
-    .filter((row) => row["Type"] === "assignment")
-    .map((row) => createAssignmentsSection(row))
-    .join("");
+//   console.log(projectsHTML);
+//   const assignmentsHTML = data
+//     .filter((row) => row["Type"] === "assignment")
+//     .map((row) => createAssignmentsSection(row))
+//     .join("");
 
-  projectsCont.insertAdjacentHTML("beforeend", projectsHTML);
-  assignmentsCont.insertAdjacentHTML("beforeend", assignmentsHTML);
-}
+//   projectsCont.insertAdjacentHTML("beforeend", projectsHTML);
+//   assignmentsCont.insertAdjacentHTML("beforeend", assignmentsHTML);
+// }
 
 function initResources(data) {
   const rDiv = document.getElementById("resources");
@@ -321,9 +322,9 @@ const locationHandler = async () => {
   if (location === "/schedule") {
     const data = await siteDataPromise;
     initSchedule(data);
-  } else if (location === "/assignments") {
-    const data = await siteDataPromise;
-    initAssignments(data.projects);
+    // } else if (location === "/assignments") {
+    //   const data = await siteDataPromise;
+    //   initAssignments(data.projects);
   } else if (location === "/resources") {
     const data = await siteDataPromise;
     initResources(data.resources);
