@@ -124,16 +124,11 @@ function initSchedule(data) {
     });
 
   Object.values(weeks).forEach(({ container, schedule }) => {
-    const sww1 = schedule["Scholarly Website of the Week (1)"];
-    const sww2 = schedule["Scholarly Website of the Week (2)"];
+    const sww = schedule["Scholarly Website of the Week"];
     let swwHTML = "";
 
-    if (sww1.length > 0 && sww2.length > 0) {
-      swwHTML = `<p class="sww">Scholarly website presentations: ${sww1} and ${sww2}</p>`;
-    } else if (sww1.length > 0 || sww2.length > 0) {
-      swwHTML = `<p class="sww">Scholarly website presentation: ${
-        sww1 || sww2
-      }</p>`;
+    if (sww.length > 0) {
+      swwHTML = `<p class="sww"><strong>Scholarly website presentation:</strong> ${sww}</p>`;
     } else {
       swwHTML = "";
     }
@@ -144,7 +139,7 @@ function initSchedule(data) {
           ${swwHTML}
           ${
             schedule["Guest Lecture"]
-              ? `<p>Guest lecture: ${schedule["Guest Lecture"]}</p>`
+              ? `<p><strong>Guest lecture:</strong> ${schedule["Guest Lecture"]}</p>`
               : ""
           }
       `;
