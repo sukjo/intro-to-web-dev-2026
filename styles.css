@@ -12,11 +12,13 @@
   --marg-m: 1rem;
   --c-dark: #253031;
   --c-light: #f4eeed;
+  --c-medium: #c6bebc;
   --c-acc-1: #699fe6;
   --c-acc-2: #cee397;
   --c-acc-3: #fb4d3d;
   --border-px: 0.7px;
   --border-rad: 20px;
+  --st-link-sz: 1.2rem;
 }
 
 * {
@@ -85,21 +87,121 @@ nav {
   }
 }
 
-.students {
+.students-container {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  gap: 2ch;
+}
+@media all and (max-width: 568px) {
+  .students-container {
+    gap: 4ch;
+  }
+}
+
+.student {
+  flex: 1 0 auto;
+
+  display: flex;
+  flex-direction: row;
+
+  width: 100%;
   height: 100%;
+  min-height: 16ch;
+  gap: 2ch;
+
+  /* background-color: var(--c-medium);
+  border-radius: var(--border-rad); */
+}
+@media all and (max-width: 568px) {
+  .student {
+    flex-direction: column;
+    gap: 0.5ch;
+    height: fit-content;
+  }
+}
+
+.student > label {
+  flex: 0 0 10ch;
+  height: fit-content;
+  font-family: var(--ff-nm-b);
+  font-size: 2rem;
+  background: transparent;
+  padding-left: 1ch;
+  align-self: center;
+}
+@media all and (max-width: 568px) {
+  .student > label {
+    flex: 0 1 auto;
+    align-self: flex-start;
+    padding-top: 1ch;
+  }
+}
+
+.student-links {
+  flex: 1 1 auto;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-self: stretch;
+  align-items: stretch;
   gap: 1ch;
 
-  & > a {
-    width: 100%;
-
-    flex: 1 1 auto;
-    border: var(--border-px) solid var(--c-dark);
-    border-radius: var(--border-rad);
-    text-align: center;
-    line-height: 5rem; /* temp fix */
+  min-height: calc(var(--st-link-sz) * 3);
+  padding: 1ch;
+  background-color: transparent;
+}
+@media all and (max-width: 568px) {
+  .student-links {
+    /* flex-direction: column;
+    width: 100%; */
   }
+}
+
+.student-links > a {
+  flex: 1 0 12ch;
+  border: var(--border-px) solid var(--c-dark);
+  border-radius: var(--border-rad);
+  font-size: var(--st-link-sz);
+  text-align: center;
+  text-decoration: none;
+  line-height: calc(var(--st-link-sz) * 5);
+
+  transition:
+    color ease-in 0.3s,
+    background-color ease-in 0.5s,
+    box-shadow ease-in 0.5s;
+}
+@media all and (max-width: 568px) {
+  .student-links > a {
+    max-height: calc(var(--st-link-sz) * 3);
+    line-height: calc(var(--st-link-sz) * 3);
+  }
+}
+
+.student-links > a:hover,
+.student-links > a:focus {
+  box-shadow: inset 0px 2px 10px 2px var(--c-light);
+  color: var(--c-light);
+  background-color: var(--c-dark);
+}
+
+.github {
+  background-color: var(--c-light);
+}
+
+.cv-wiki {
+  background-color: var(--c-acc-2);
+}
+
+.midterm {
+  background-color: var(--c-acc-1);
+}
+
+.final {
+  background-color: var(--c-acc-3);
 }
 
 #assignments {
